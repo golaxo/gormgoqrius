@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.2](https://github.com/golaxo/gormgoqrius/compare/v0.0.2...v0.0.2) (2025-10-22)
+
+
+### Features
+
+* first commit ([e3b11c4](https://github.com/golaxo/gormgoqrius/commit/e3b11c45f9847f17fa2aaa7fb51fe8eaa7244dee))
+
+
+### Miscellaneous Chores
+
+* release 0.0.1 ([a44a364](https://github.com/golaxo/gormgoqrius/commit/a44a3645335be24e7815ce30550df5fdce849289))
+* release v0.0.2 ([4d67d7a](https://github.com/golaxo/gormgoqrius/commit/4d67d7a3c01aa8318d7e5ebc76606cfbb087f21d))
+
 ## [0.0.2](https://github.com/golaxo/gormgoqrius/compare/v0.0.1...v0.0.2) (2025-10-22)
 
 
