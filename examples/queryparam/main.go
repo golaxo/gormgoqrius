@@ -6,12 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"gormgoqrius/examples"
-
-	"github.com/golaxo/goqrius/lexer"
-	"github.com/golaxo/goqrius/parser"
+	"github.com/golaxo/goqrius"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gormgoqrius/examples"
 
 	"github.com/golaxo/gormgoqrius"
 )
@@ -49,12 +47,19 @@ func (h handler) handlerUser(w http.ResponseWriter, r *http.Request) {
 
 	// Get a specific parameter by name
 	q := query.Get("q")
-	l := lexer.New(q)
-	p := parser.New(l)
-	whereCLause := gormgoqrius.WhereClause(p.Parse())
+	e, err := goqrius.Parse(q)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	whereClause := gormgoqrius.WhereClause(e)
 
 	var users []*examples.User
-	tx := h.db.Where(whereCLause).Find(&users)
+	tx := h.db
+	if whereClause != nil {
+		tx = tx.Where(whereClause)
+	}
+	tx = tx.Find(&users)
 	if tx.Error != nil {
 		http.Error(w, tx.Error.Error(), http.StatusInternalServerError)
 		return

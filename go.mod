@@ -3,7 +3,7 @@ module github.com/golaxo/gormgoqrius
 go 1.24.0
 
 require (
-	github.com/golaxo/goqrius v0.0.1
+	github.com/golaxo/goqrius v0.0.2
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.0
 )
