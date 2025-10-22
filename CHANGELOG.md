@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/golaxo/gormgoqrius/compare/v0.0.1...v0.0.2) (2025-10-22)
+
+
+### Miscellaneous Chores
+
+* release v0.0.2 ([4d67d7a](https://github.com/golaxo/gormgoqrius/commit/4d67d7a3c01aa8318d7e5ebc76606cfbb087f21d))
+
 ## 0.0.1 (2025-10-21)
 
 
