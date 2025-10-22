@@ -3,42 +3,14 @@ package gormgoqrius
 import (
 	"strconv"
 
-	"github.com/golaxo/goqrius/parser"
+	"github.com/golaxo/goqrius"
 	"github.com/golaxo/goqrius/token"
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-var (
-	_ gorm.StatementModifier = new(gormExpression)
-	_ clause.Expression      = new(gormExpression)
-)
-
-type gormExpression struct {
-	e parser.Expression
-}
-
-func (g gormExpression) ModifyStatement(statement *gorm.Statement) {
-	if statement == nil || g.e == nil {
-		return
-	}
-
-	ce := toClauseExpression(g.e)
-	if ce == nil {
-		return
-	}
-
-	statement.AddClause(clause.Where{Exprs: []clause.Expression{ce}})
-}
-
-func (g gormExpression) Build(builder clause.Builder) {
-	ce := toClauseExpression(g.e)
-	if ce != nil {
-		ce.Build(builder)
-	}
-}
-
-func WhereClause(e parser.Expression) clause.Expression {
+// WhereClause transform a goqrius.Expression into a GORM clause.
+// The return value can be null, meaning there was no query.
+func WhereClause(e goqrius.Expression) clause.Expression {
 	return toClauseExpression(e)
 }
 
@@ -46,9 +18,9 @@ func WhereClause(e parser.Expression) clause.Expression {
 // supported operations: and, or, not, eq, ne, gt, ge, lt, le.
 //
 //nolint:gocognit,funlen // refactor later.
-func toClauseExpression(e parser.Expression) clause.Expression {
+func toClauseExpression(e goqrius.Expression) clause.Expression {
 	switch v := e.(type) {
-	case *parser.InfixExpr:
+	case *goqrius.FilterExpr:
 		left := toClauseExpression(v.Left)
 
 		right := toClauseExpression(v.Right)
@@ -103,18 +75,18 @@ func toClauseExpression(e parser.Expression) clause.Expression {
 		default:
 			return nil
 		}
-	case *parser.NotExpr:
+	case *goqrius.NotExpr:
 		inner := toClauseExpression(v.Right)
 		if inner == nil {
 			return nil
 		}
 
 		return clause.Not(inner)
-	case *parser.Identifier:
+	case *goqrius.Identifier:
 		return clause.Expr{SQL: "?", Vars: []any{clause.Column{Name: v.Value}}}
-	case *parser.IntegerLiteral:
+	case *goqrius.IntegerLiteral:
 		return clause.Expr{SQL: "?", Vars: []any{parseInt(v.Value)}}
-	case *parser.StringLiteral:
+	case *goqrius.StringLiteral:
 		return clause.Expr{SQL: "?", Vars: []any{v.Value}}
 	default:
 		return nil
@@ -125,9 +97,9 @@ func toClauseExpression(e parser.Expression) clause.Expression {
 // Returns ok=false when it cannot be represented using standard GORM comparison clauses.
 //
 //nolint:nonamedreturns // named returns make sense here
-func splitComparisonSides(left, right parser.Expression) (column, value any, ok bool) {
+func splitComparisonSides(left, right goqrius.Expression) (column, value any, ok bool) {
 	// Left must be an identifier (column)
-	lid, ok := left.(*parser.Identifier)
+	lid, ok := left.(*goqrius.Identifier)
 	if !ok {
 		return nil, nil, false
 	}
@@ -135,15 +107,15 @@ func splitComparisonSides(left, right parser.Expression) (column, value any, ok 
 	column = clause.Column{Name: lid.Value}
 	// Right can be int, string, or identifier (column-to-column)
 	switch rv := right.(type) {
-	case *parser.IntegerLiteral:
+	case *goqrius.IntegerLiteral:
 		value = parseInt(rv.Value)
 
 		return column, value, true
-	case *parser.StringLiteral:
+	case *goqrius.StringLiteral:
 		value = rv.Value
 
 		return column, value, true
-	case *parser.Identifier:
+	case *goqrius.Identifier:
 		// Use raw expression for column-to-column comparisons
 		return nil, nil, false
 	default:
@@ -168,7 +140,7 @@ func parseInt(s string) any {
 }
 
 // fallbackBinary builds a raw SQL expression for complex cases (e.g., column-to-column).
-func fallbackBinary(op token.Type, left, right parser.Expression) clause.Expression {
+func fallbackBinary(op token.Type, left, right goqrius.Expression) clause.Expression {
 	l := toClauseExpression(left)
 
 	r := toClauseExpression(right)

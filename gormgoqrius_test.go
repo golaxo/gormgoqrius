@@ -4,8 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golaxo/goqrius/lexer"
-	"github.com/golaxo/goqrius/parser"
+	"github.com/golaxo/goqrius"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -45,7 +44,12 @@ func TestGetClause_SQLLite_String(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			expr := WhereClause(parse(tt.filter))
+			e, err := goqrius.Parse(tt.filter)
+			if err != nil {
+				t.Fatalf("error not expected: %s", err)
+			}
+
+			expr := WhereClause(e)
 			if expr == nil {
 				t.Fatalf("expected non-nil clause expression")
 			}
@@ -63,10 +67,24 @@ func TestGetClause_SQLLite_String(t *testing.T) {
 	}
 }
 
+func TestGetClause_EmptyString(t *testing.T) {
+	t.Parallel()
+
+	e, err := goqrius.Parse("")
+	if err != nil {
+		t.Fatalf("error not expected: %s", err)
+	}
+
+	expr := WhereClause(e)
+	if expr != nil {
+		t.Fatalf("expected nil clause expression")
+	}
+}
+
 func TestGetClause_Fallback_ColumnToColumn(t *testing.T) {
 	t.Parallel()
 
-	expr := WhereClause(parse("age gt otherAge"))
+	expr := WhereClause(goqrius.MustParse("age gt otherAge"))
 	sql, vars := renderWhere(t, expr)
 	// fallback should produce a raw expression comparing the two columns
 	wantSQL := "WHERE `age` > `otherAge`"
@@ -77,47 +95,6 @@ func TestGetClause_Fallback_ColumnToColumn(t *testing.T) {
 	if len(vars) != 0 {
 		t.Fatalf("unexpected vars: %#v", vars)
 	}
-}
-
-func TestStatementModifier_AddsWhere(t *testing.T) {
-	t.Parallel()
-
-	ast := parse("age ge 21")
-	modifier := gormExpression{e: ast}
-	// Build statement and apply modifier
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{DryRun: true})
-	if err != nil {
-		t.Fatalf("failed to open gorm sqlite dryrun: %v", err)
-	}
-
-	stmt := &gorm.Statement{DB: db}
-	stmt.Clauses = map[string]clause.Clause{}
-	modifier.ModifyStatement(stmt)
-
-	c, ok := stmt.Clauses["WHERE"]
-	if !ok {
-		t.Fatalf("WHERE clause was not added")
-	}
-
-	c.Build(stmt)
-
-	wantSQL := "WHERE `age` >= ?"
-	if got := stmt.SQL.String(); got != wantSQL {
-		t.Fatalf("unexpected SQL. got=%q want=%q", got, wantSQL)
-	}
-
-	wantVars := []any{int64(21)}
-	if !reflect.DeepEqual(stmt.Vars, wantVars) {
-		t.Fatalf("unexpected vars. got=%#v want=%#v", stmt.Vars, wantVars)
-	}
-}
-
-// parse is a small helper to get an AST from a filter string.
-func parse(input string) parser.Expression {
-	l := lexer.New(input)
-	p := parser.New(l)
-
-	return p.Parse()
 }
 
 // renderWhere renders the WHERE clause SQL and Vars for a given clause.Expression.

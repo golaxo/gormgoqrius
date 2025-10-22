@@ -3,12 +3,10 @@ package main
 import (
 	"fmt"
 
-	"gormgoqrius/examples"
-
-	"github.com/golaxo/goqrius/lexer"
-	"github.com/golaxo/goqrius/parser"
+	"github.com/golaxo/goqrius"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gormgoqrius/examples"
 
 	"github.com/golaxo/gormgoqrius"
 )
@@ -27,9 +25,10 @@ func main() {
 		{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
 	}
 	db.CreateInBatches(&migrateUsers, len(migrateUsers))
-	fmt.Printf("%d users created\n", len(migrateUsers))
+	fmt.Printf("%d users created\n\n", len(migrateUsers))
 
 	filters := []string{
+		"",
 		"name eq 'John'",
 		"name ne 'John'",
 		"not name eq 'John'",
@@ -37,17 +36,23 @@ func main() {
 		"age le 18 or age gt 65",
 	}
 	for _, filter := range filters {
-		fmt.Printf("filter: %s\n", filter)
-		p := parser.New(lexer.New(filter))
-		e := p.Parse()
-
+		fmt.Printf("filter: %q\n", filter)
+		e, err := goqrius.Parse(filter)
+		if err != nil {
+			panic(err)
+		}
 		whereClause := gormgoqrius.WhereClause(e)
 
 		var users []*examples.User
-		db.Clauses(whereClause).Find(&users)
+		tx := db.Debug()
+		if whereClause != nil {
+			tx = tx.Clauses(whereClause)
+		}
+		tx.Find(&users)
 		fmt.Printf("%d user(s) found\n", len(users))
 		for _, u := range users {
 			fmt.Printf("\t%+v\n", *u)
 		}
+		fmt.Println("---------")
 	}
 }

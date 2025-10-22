@@ -10,14 +10,18 @@ Implementation of [GoQrius][goqrius] for [GORM][gorm].
 
 ## Getting Started
 
-GormGoQrius is using [GORM clauses](https://gorm.io/gen/clause.html) to leverage the `WHERE` clause.
+To start using it:
+
+```bash
+go get github.com/golaxo/gormgoqrius@latest
+```
+
+GormGoQrius is using [GORM clauses](https://gorm.io/gen/clause.html) to leverage the SQL `WHERE` clause.
 So it can be used as simple as:
 
 ```go
 filter := "name eq 'John'"
-p := parser.New(lexer.New(filter))
-e := p.Parse()
-
+e := goqrius.MustParse(filter)
 whereClause := gormgoqrius.WhereClause(e)
 
 var users []*User
