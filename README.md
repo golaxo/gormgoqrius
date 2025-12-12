@@ -8,7 +8,7 @@
 
 Implementation of [GoQrius][goqrius] for [GORM][gorm].
 
-## Getting Started
+## ⬇️ Getting Started
 
 To start using it:
 
