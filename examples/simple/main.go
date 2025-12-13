@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 
+	"gormgoqrius/examples"
+
 	"github.com/golaxo/goqrius"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gormgoqrius/examples"
 
 	"github.com/golaxo/gormgoqrius"
 )
@@ -18,8 +19,9 @@ func main() {
 	}
 	_ = db.AutoMigrate(&examples.User{})
 
+	email := "test@test.com"
 	migrateUsers := []*examples.User{
-		{ID: 1, Name: "John", Surname: "Doe", Age: 20},
+		{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
 		{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
 		{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
 		{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
@@ -34,6 +36,7 @@ func main() {
 		"not name eq 'John'",
 		"age gt 18 and age lt 65",
 		"age le 18 or age gt 65",
+		"email eq null",
 	}
 	for _, filter := range filters {
 		fmt.Printf("filter: %q\n", filter)

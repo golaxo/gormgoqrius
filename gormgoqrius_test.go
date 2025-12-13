@@ -38,6 +38,16 @@ func TestGetClause_SQLLite_String(t *testing.T) {
 			wantSQL:  "WHERE (`name` = ? OR `age` < ?)",
 			wantVars: []any{"John", int64(21)},
 		},
+		"eq null": {
+			filter:   "name eq null",
+			wantSQL:  "WHERE `name` IS NULL",
+			wantVars: nil,
+		},
+		"ne null": {
+			filter:   "name ne null",
+			wantSQL:  "WHERE `name` IS NOT NULL",
+			wantVars: nil,
+		},
 	}
 
 	for name, tt := range tests {

@@ -88,6 +88,8 @@ func toClauseExpression(e goqrius.Expression) clause.Expression {
 		return clause.Expr{SQL: "?", Vars: []any{parseInt(v.Value)}}
 	case *goqrius.StringLiteral:
 		return clause.Expr{SQL: "?", Vars: []any{v.Value}}
+	case *goqrius.Null:
+		return clause.Expr{SQL: "NULL"}
 	default:
 		return nil
 	}
@@ -113,6 +115,11 @@ func splitComparisonSides(left, right goqrius.Expression) (column, value any, ok
 		return column, value, true
 	case *goqrius.StringLiteral:
 		value = rv.Value
+
+		return column, value, true
+	case *goqrius.Null:
+		// Let GORM render IS NULL / IS NOT NULL
+		value = nil
 
 		return column, value, true
 	case *goqrius.Identifier:
