@@ -1,7 +1,3 @@
-github.com/golaxo/goqrius v0.0.4 h1:aMdzW2XhhbFRaq94q9CeWSO8CAzvRgI68RoklnteK4I=
-github.com/golaxo/goqrius v0.0.4/go.mod h1:UsfNoEqAUp9jPx81JsytcSds2qVJbqyWtt1qBdWivAk=
-github.com/golaxo/goqrius v0.0.5-0.20251214092606-377f298033e1 h1:9b+CsMFLAezod4mLH9uUUJ9zjUSZm6T3JL3N/q8tfek=
-github.com/golaxo/goqrius v0.0.5-0.20251214092606-377f298033e1/go.mod h1:UsfNoEqAUp9jPx81JsytcSds2qVJbqyWtt1qBdWivAk=
 github.com/golaxo/goqrius v0.0.5-0.20251214093304-456cd3df34b9 h1:ekJYgYHKv20n23fpQRV0eeBX8V/A2iVv3Xqv7J7Jsy0=
 github.com/golaxo/goqrius v0.0.5-0.20251214093304-456cd3df34b9/go.mod h1:UsfNoEqAUp9jPx81JsytcSds2qVJbqyWtt1qBdWivAk=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=

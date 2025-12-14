@@ -6,13 +6,13 @@ import (
 	"testing"
 
 	"github.com/golaxo/goqrius"
-	"github.com/golaxo/gormgoqrius"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
 	"gormgoqrius/tests"
+
+	"github.com/golaxo/gormgoqrius"
 )
 
 func TestSQLiteDefault(t *testing.T) {

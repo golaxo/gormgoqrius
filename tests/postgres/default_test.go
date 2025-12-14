@@ -5,15 +5,15 @@ import (
 	"testing"
 
 	"github.com/golaxo/goqrius"
-	"github.com/golaxo/gormgoqrius"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	postgresDriver "gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
 	"gormgoqrius/tests"
+
+	"github.com/golaxo/gormgoqrius"
 )
 
 func TestPostgresDefault(t *testing.T) {
