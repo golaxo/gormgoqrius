@@ -5,7 +5,7 @@ go 1.24.0
 replace github.com/golaxo/gormgoqrius => ../
 
 require (
-	github.com/golaxo/goqrius v0.0.5-0.20251214093304-456cd3df34b9
+	github.com/golaxo/goqrius v0.0.5
 	github.com/golaxo/gormgoqrius v0.0.3
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.40.0

@@ -22,66 +22,46 @@ type DefaultTest struct {
 	ExpectedIDs []int
 }
 
-func DefaultScenarios() map[string]DefaultTest {
+func DefaultUsers() []*User {
 	email := "test@test.com"
+
+	return []*User{
+		{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
+		{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
+		{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
+		{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
+	}
+}
+
+func DefaultScenarios() map[string]DefaultTest {
 	tdt := map[string]DefaultTest{
 		"no filter": {
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{1, 2, 3, 4},
 		},
 		"name eq 'John'": {
-			Input: "name eq 'John'",
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			Input:       "name eq 'John'",
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{1},
 		},
 		"name ne 'John'": {
-			Input: "name ne 'John'",
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			Input:       "name ne 'John'",
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{2, 3, 4},
 		},
 		"not surname eq 'Doe'": {
-			Input: "not surname eq 'Doe'",
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			Input:       "not surname eq 'Doe'",
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{3, 4},
 		},
 		"email eq null": {
-			Input: "email eq null",
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			Input:       "email eq null",
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{2, 3, 4},
 		},
 		"email ne null": {
-			Input: "email ne null",
-			ToMigrate: []*User{
-				{ID: 1, Name: "John", Surname: "Doe", Age: 20, Email: &email},
-				{ID: 2, Name: "Jane", Surname: "Doe", Age: 10},
-				{ID: 3, Name: "Alice", Surname: "Smith", Age: 66},
-				{ID: 4, Name: "Bob", Surname: "Smith", Age: 30},
-			},
+			Input:       "email ne null",
+			ToMigrate:   DefaultUsers(),
 			ExpectedIDs: []int{1},
 		},
 	}

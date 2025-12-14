@@ -27,8 +27,8 @@ func TestSQLiteDefault(t *testing.T) {
 			err := db.AutoMigrate(&tests.User{})
 			require.NoError(t, err)
 
-			db.CreateInBatches(&test.ToMigrate, len(test.ToMigrate))
-			require.NoError(t, err)
+			txBatch := db.CreateInBatches(&test.ToMigrate, len(test.ToMigrate))
+			require.NoError(t, txBatch.Error)
 
 			e, err := goqrius.Parse(test.Input)
 			require.NoError(t, err)

@@ -7,10 +7,6 @@ import (
 	"github.com/golaxo/goqrius"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	postgresDriver "gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"gormgoqrius/tests"
 
 	"github.com/golaxo/gormgoqrius"
@@ -29,8 +25,8 @@ func TestPostgresDefault(t *testing.T) {
 			err := db.AutoMigrate(&tests.User{})
 			require.NoError(t, err)
 
-			db.CreateInBatches(&test.ToMigrate, len(test.ToMigrate))
-			require.NoError(t, err)
+			txBatch := db.CreateInBatches(&test.ToMigrate, len(test.ToMigrate))
+			require.NoError(t, txBatch.Error)
 
 			e, err := goqrius.Parse(test.Input)
 			require.NoError(t, err)
@@ -54,37 +50,4 @@ func TestPostgresDefault(t *testing.T) {
 			assert.ElementsMatch(t, actual, expected)
 		})
 	}
-}
-
-func getDB(t *testing.T) (db *gorm.DB, deferFunc func()) {
-	t.Helper()
-
-	ctx := t.Context()
-
-	dbName := "users"
-	dbUser := "user"
-	dbPassword := "password"
-
-	postgresContainer, err := postgres.Run(ctx,
-		"postgres:16-alpine",
-		postgres.WithDatabase(dbName),
-		postgres.WithUsername(dbUser),
-		postgres.WithPassword(dbPassword),
-		postgres.BasicWaitStrategies(),
-	)
-	deferFunc = func() {
-		testcontainers.CleanupContainer(t, postgresContainer)
-		errTC := testcontainers.TerminateContainer(postgresContainer)
-		require.NoError(t, errTC)
-	}
-
-	dsn, err := postgresContainer.ConnectionString(ctx)
-	if err != nil {
-		t.Fatalf("can't get connection string: %s", err)
-	}
-
-	db, err = gorm.Open(postgresDriver.Open(dsn), &gorm.Config{})
-	require.NoError(t, err)
-
-	return db, deferFunc
 }
