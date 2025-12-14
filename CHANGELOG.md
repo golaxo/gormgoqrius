@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/golaxo/gormgoqrius/compare/v0.0.3...v0.0.4) (2025-12-14)
+
+
+### Bug Fixes
+
+* using latest goqrius v0.0.5 ([#16](https://github.com/golaxo/gormgoqrius/issues/16)) ([6754340](https://github.com/golaxo/gormgoqrius/commit/6754340473d87154c2015bb9e21f47548f7a5043))
+
 ## [0.0.3](https://github.com/golaxo/gormgoqrius/compare/v0.0.2...v0.0.3) (2025-12-13)
 
 
