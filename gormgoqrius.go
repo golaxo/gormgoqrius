@@ -22,13 +22,14 @@ func toClauseExpression(e goqrius.Expression) clause.Expression {
 	case *goqrius.AndExpr:
 		left := toClauseExpression(v.Left)
 		right := toClauseExpression(v.Right)
+
 		return clause.And(left, right)
 	case *goqrius.OrExpr:
 		left := toClauseExpression(v.Left)
 		right := toClauseExpression(v.Right)
+
 		return clause.Or(left, right)
 	case *goqrius.FilterExpr:
-		//nolint:exhaustive // no need to check every case.
 		switch v.Operator {
 		case goqrius.Eq:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
