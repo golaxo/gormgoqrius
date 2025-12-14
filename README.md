@@ -2,6 +2,7 @@
 
 [![version](https://img.shields.io/github/v/release/golaxo/gormgoqrius)](https://img.shields.io/github/v/release/golaxo/gormgoqrius)
 [![PR checks](https://github.com/golaxo/gormgoqrius/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/golaxo/gormgoqrius/actions/workflows/pr-checks.yml)
+[![CI](https://github.com/golaxo/gormgoqrius/actions/workflows/go.yml/badge.svg)](https://github.com/golaxo/gormgoqrius/actions/workflows/go.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/golaxo/gormgoqrius)](https://goreportcard.com/report/github.com/golaxo/gormgoqrius)
 
 > [!WARNING]
