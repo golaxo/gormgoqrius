@@ -6,7 +6,7 @@ replace github.com/golaxo/gormgoqrius => ../
 
 require (
 	github.com/golaxo/goqrius v0.0.5-0.20251214093304-456cd3df34b9
-	github.com/golaxo/gormgoqrius v0.0.2
+	github.com/golaxo/gormgoqrius v0.0.3
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1
 )
