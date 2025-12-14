@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/golaxo/goqrius"
-	"github.com/golaxo/goqrius/token"
 	"gorm.io/gorm/clause"
 )
 
@@ -20,58 +19,59 @@ func WhereClause(e goqrius.Expression) clause.Expression {
 //nolint:gocognit,funlen // refactor later.
 func toClauseExpression(e goqrius.Expression) clause.Expression {
 	switch v := e.(type) {
-	case *goqrius.FilterExpr:
+	case *goqrius.AndExpr:
 		left := toClauseExpression(v.Left)
-
 		right := toClauseExpression(v.Right)
+		return clause.And(left, right)
+	case *goqrius.OrExpr:
+		left := toClauseExpression(v.Left)
+		right := toClauseExpression(v.Right)
+		return clause.Or(left, right)
+	case *goqrius.FilterExpr:
 		//nolint:exhaustive // no need to check every case.
 		switch v.Operator {
-		case token.And:
-			return clause.And(left, right)
-		case token.Or:
-			return clause.Or(left, right)
-		case token.Eq:
+		case goqrius.Eq:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Eq{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.Eq, v.Left, v.Right)
-		case token.NotEq:
+			return nil
+		case goqrius.NotEq:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Neq{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.NotEq, v.Left, v.Right)
-		case token.GreaterThan:
+			return nil
+		case goqrius.GreaterThan:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Gt{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.GreaterThan, v.Left, v.Right)
-		case token.GreaterThanOrEqual:
+			return nil
+		case goqrius.GreaterThanOrEqual:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Gte{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.GreaterThanOrEqual, v.Left, v.Right)
-		case token.LessThan:
+			return nil
+		case goqrius.LessThan:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Lt{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.LessThan, v.Left, v.Right)
-		case token.LessThanOrEqual:
+			return nil
+		case goqrius.LessThanOrEqual:
 			col, val, ok := splitComparisonSides(v.Left, v.Right)
 			if ok {
 				return clause.Lte{Column: col, Value: val}
 			}
 
-			return fallbackBinary(token.LessThanOrEqual, v.Left, v.Right)
+			return nil
 		default:
 			return nil
 		}
@@ -95,19 +95,10 @@ func toClauseExpression(e goqrius.Expression) clause.Expression {
 	}
 }
 
-// splitComparisonSides extracts a left column and right value if possible.
-// Returns ok=false when it cannot be represented using standard GORM comparison clauses.
-//
 //nolint:nonamedreturns // named returns make sense here
-func splitComparisonSides(left, right goqrius.Expression) (column, value any, ok bool) {
-	// Left must be an identifier (column)
-	lid, ok := left.(*goqrius.Identifier)
-	if !ok {
-		return nil, nil, false
-	}
-
+func splitComparisonSides(lid *goqrius.Identifier, right goqrius.Value) (column, value any, ok bool) {
 	column = clause.Column{Name: lid.Value}
-	// Right can be int, string, or identifier (column-to-column)
+	// Right can be int, string or null
 	switch rv := right.(type) {
 	case *goqrius.IntegerLiteral:
 		value = parseInt(rv.Value)
@@ -122,9 +113,6 @@ func splitComparisonSides(left, right goqrius.Expression) (column, value any, ok
 		value = nil
 
 		return column, value, true
-	case *goqrius.Identifier:
-		// Use raw expression for column-to-column comparisons
-		return nil, nil, false
 	default:
 		return nil, nil, false
 	}
@@ -144,42 +132,4 @@ func parseInt(s string) any {
 	}
 
 	return s
-}
-
-// fallbackBinary builds a raw SQL expression for complex cases (e.g., column-to-column).
-func fallbackBinary(op token.Type, left, right goqrius.Expression) clause.Expression {
-	l := toClauseExpression(left)
-
-	r := toClauseExpression(right)
-	if l == nil || r == nil {
-		return nil
-	}
-
-	sqlOp := operatorSQL(op)
-
-	return clause.Expr{SQL: "? " + sqlOp + " ?", Vars: []any{l, r}, WithoutParentheses: false}
-}
-
-//nolint:exhaustive // no need to check every case.
-func operatorSQL(op token.Type) string {
-	switch op {
-	case token.Eq:
-		return "="
-	case token.NotEq:
-		return "<>"
-	case token.GreaterThan:
-		return ">"
-	case token.GreaterThanOrEqual:
-		return ">="
-	case token.LessThan:
-		return "<"
-	case token.LessThanOrEqual:
-		return "<="
-	case token.And:
-		return "AND"
-	case token.Or:
-		return "OR"
-	default:
-		return string(op)
-	}
 }
