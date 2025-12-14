@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 
-	"gormgoqrius/examples"
-
 	"github.com/golaxo/goqrius"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gormgoqrius/examples"
 
 	"github.com/golaxo/gormgoqrius"
 )

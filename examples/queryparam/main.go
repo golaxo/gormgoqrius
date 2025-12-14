@@ -50,6 +50,7 @@ func (h handler) handlerUser(w http.ResponseWriter, r *http.Request) {
 	e, err := goqrius.Parse(q)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+
 		return
 	}
 	whereClause := gormgoqrius.WhereClause(e)
@@ -62,6 +63,7 @@ func (h handler) handlerUser(w http.ResponseWriter, r *http.Request) {
 	tx = tx.Find(&users)
 	if tx.Error != nil {
 		http.Error(w, tx.Error.Error(), http.StatusInternalServerError)
+
 		return
 	}
 
@@ -70,6 +72,7 @@ func (h handler) handlerUser(w http.ResponseWriter, r *http.Request) {
 	// Write the JSON response
 	if err := json.NewEncoder(w).Encode(users); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
 		return
 	}
 }

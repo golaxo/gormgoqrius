@@ -16,6 +16,7 @@ build: ## Build
 t: test
 test: ## Run unit tests, alias: t
 	go test --cover -timeout=300s -parallel=16 ./...
+	cd tests && go test --cover -timeout=300s -parallel=16 ./...
 .PHONY: t test
 
 fmt: format-code

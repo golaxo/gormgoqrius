@@ -5,8 +5,8 @@ go 1.24.0
 replace github.com/golaxo/gormgoqrius => ../
 
 require (
-	github.com/golaxo/goqrius v0.0.4
-	github.com/golaxo/gormgoqrius v0.0.2
+	github.com/golaxo/goqrius v0.0.5
+	github.com/golaxo/gormgoqrius v0.0.3
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1
 )

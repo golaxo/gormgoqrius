@@ -91,22 +91,6 @@ func TestGetClause_EmptyString(t *testing.T) {
 	}
 }
 
-func TestGetClause_Fallback_ColumnToColumn(t *testing.T) {
-	t.Parallel()
-
-	expr := WhereClause(goqrius.MustParse("age gt otherAge"))
-	sql, vars := renderWhere(t, expr)
-	// fallback should produce a raw expression comparing the two columns
-	wantSQL := "WHERE `age` > `otherAge`"
-	if sql != wantSQL {
-		t.Fatalf("unexpected SQL. got=%q want=%q", sql, wantSQL)
-	}
-
-	if len(vars) != 0 {
-		t.Fatalf("unexpected vars: %#v", vars)
-	}
-}
-
 // renderWhere renders the WHERE clause SQL and Vars for a given clause.Expression.
 func renderWhere(t *testing.T, expr clause.Expression) (string, []any) {
 	t.Helper()
