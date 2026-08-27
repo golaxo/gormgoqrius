@@ -1,3 +1,4 @@
+// Package gormgoqrius provides a GORM dialect for goqrius.
 package gormgoqrius
 
 import (
