@@ -59,7 +59,7 @@ jobs:
           check_hidden: true
       - name: Check spelling of entire workspace
         uses: crate-ci/typos@a8168dc2984a9e2352f183ffe788f0f23a300389 # v1
-      - uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24
+      - uses: DavidAnson/markdownlint-cli2-action@696eb3f2509270d7b882d2aa68347bc676e7af34 # v25.0.0
         with:
           globs: '**/*.md'
       - uses: karancode/yamllint-github-action@4052d365f09b8d34eb552c363d1141fd60e2aeb2 # master
